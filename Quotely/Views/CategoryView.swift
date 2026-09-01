@@ -36,7 +36,7 @@ struct CategoryView: View {
                 ForEach(categories, id: \.self) { category in
                     
                     NavigationLink {
-                        CategoryQuotesView(categoryQuote: category)
+                        CategoryDetailView(categoryQuote: category)
                     } label: {
                         Text(category)
                             .foregroundStyle(.black)
