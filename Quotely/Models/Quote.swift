@@ -6,7 +6,7 @@
 //
 import Foundation
 
-struct Quote: Codable {
+struct Quote: Codable, Identifiable {
     let id: String
     let text: String
     let author: String

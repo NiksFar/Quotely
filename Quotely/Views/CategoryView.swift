@@ -9,18 +9,7 @@ import SwiftUI
 
 struct CategoryView: View {
     
-    let categories = [
-        "Motivation",
-        "Life",
-        "Love",
-        "Wisdom",
-        "Success",
-        "Happiness",
-        "Courage",
-        "Friendship",
-        "Education",
-        "Future"
-    ]
+    @State private var categories: [String] = []
     
     let columns = [
         GridItem(.flexible(), spacing: 15),
@@ -36,7 +25,7 @@ struct CategoryView: View {
                 ForEach(categories, id: \.self) { category in
                     
                     NavigationLink {
-                        CategoryDetailView(categoryQuote: category)
+                        CategoryDetailView(categoryName: category)
                     } label: {
                         Text(category)
                             .foregroundStyle(.black)
@@ -54,7 +43,32 @@ struct CategoryView: View {
             .frame(maxHeight: .infinity, alignment: .top)
             .navigationTitle("Kategorien")
         }
+        .task {
+            fetchCategories()
+        }
     }
+    //MARK: - API
+    private func getCategoriesFromAPI() async throws -> [String] {
+        guard let url = URL(string: "https://api.syntax-institut.de/categories") else {
+            throw URLError(.badURL)
+        }
+        let (data, _) = try await URLSession.shared.data(from: url)
+        let result = try JSONDecoder().decode([String].self, from: data)
+        
+        return result
+    }
+    
+    private func fetchCategories() {
+        Task {
+            do {
+                self.categories = try await getCategoriesFromAPI()
+            } catch {
+                print(error)
+            }
+        }
+    }
+    
+    
 }
 
 #Preview {
