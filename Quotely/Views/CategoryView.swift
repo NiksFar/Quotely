@@ -27,7 +27,7 @@ struct CategoryView: View {
                     NavigationLink {
                         CategoryDetailView(categoryName: category)
                     } label: {
-                        Text(category)
+                        Text(translationToDE(category: category))
                             .foregroundStyle(.black)
                             .frame(maxWidth: .infinity)
                             .frame(height: 60)
@@ -35,7 +35,6 @@ struct CategoryView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 20))
                             .contentShape(RoundedRectangle(cornerRadius: 20))
                     }
-                    
                 }
                 
             }
@@ -68,6 +67,32 @@ struct CategoryView: View {
         }
     }
     
+    private func translationToDE(category: String) -> String {
+            switch category {
+            case "motivation":
+                return "Motivation"
+            case "life":
+                return "Leben"
+            case "love":
+                return "Liebe"
+            case "wisdom":
+                return "Weisheit"
+            case "success":
+                return "Erfolg"
+            case "happiness":
+                return "Glück"
+            case "courage":
+                return "Mut"
+            case "friendship":
+                return "Freundschaft"
+            case "education":
+                return "Bildung"
+            case "future":
+                return "Zukunft"
+            default:
+                return category
+            }
+    }
     
 }
 
