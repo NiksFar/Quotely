@@ -8,5 +8,5 @@
 import Foundation
 
 struct ApiKey {
-    var key: String = "0===0"
+    var key: String = "0===1"
 }
