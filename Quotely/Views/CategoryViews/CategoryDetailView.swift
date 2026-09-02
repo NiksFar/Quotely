@@ -29,7 +29,7 @@ struct CategoryDetailView: View {
     
     //MARK: - API
     private func getCategoryQuotesFromAPI() async throws -> [Quote] {
-        guard let url = URL(string: url+categoryName) else {
+        guard let url = URL(string: url+categoryName+"&limit=15") else {
             throw URLError(.badURL)
         }
         let (data, _) = try await URLSession.shared.data(from: url)
