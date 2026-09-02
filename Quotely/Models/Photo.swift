@@ -22,3 +22,5 @@ struct Photo: Codable, Identifiable {
 struct PhotoURLs: Codable {
     let regular: String
 }
+
+//
