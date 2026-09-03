@@ -34,7 +34,7 @@ struct AuthorListView: View {
     }
     
     private func getAuthorsFromAPI() async throws -> [Author] {
-        guard let url = URL(string: urlString + ApiKey().key) else {
+        guard let url = URL(string: urlString + ApiKey().quoteKey) else {
             throw URLError(.badURL)
         }
         

@@ -27,7 +27,7 @@ struct AuthorDetailView: View {
     
     //MARK: -API-Calls
     private func getAuthorQuotesFromAPI() async throws -> [Quote] {
-        guard let url = URL(string: urlString+author.slug+"&key="+ApiKey().key+"&limit=15") else {
+        guard let url = URL(string: urlString+author.slug+"&key="+ApiKey().quoteKey+"&limit=15") else {
             throw URLError(.badURL)
         }
         let (data, _) = try await URLSession.shared.data(from: url)

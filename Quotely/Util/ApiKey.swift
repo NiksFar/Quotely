@@ -8,5 +8,6 @@
 import Foundation
 
 struct ApiKey {
-    var key: String = "0===123"
+    var quoteKey: String = "$===$"
+    var imageKey: String = "0___0"
 }
