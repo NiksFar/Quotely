@@ -10,6 +10,7 @@ import SwiftUI
 struct CategoryView: View {
     
     @State private var categories: [String] = []
+    @State private var showErrorAlert: Bool = false
     
     let columns = [
         GridItem(.flexible(), spacing: 15),
@@ -36,7 +37,6 @@ struct CategoryView: View {
                             .contentShape(RoundedRectangle(cornerRadius: 20))
                     }
                 }
-                
             }
             .padding()
             .frame(maxHeight: .infinity, alignment: .top)
@@ -45,6 +45,13 @@ struct CategoryView: View {
         .task {
             fetchCategories()
         }
+        
+        .alert("Fehler", isPresented: $showErrorAlert) {
+            Button("Ok") { }
+        } message: {
+            Text("Kategorien konnten leider nicht geladen werden. Bitte versuche es später erneut.")
+        }
+        
     }
     //MARK: - API
     private func getCategoriesFromAPI() async throws -> [String] {
@@ -62,38 +69,37 @@ struct CategoryView: View {
             do {
                 self.categories = try await getCategoriesFromAPI()
             } catch {
-                print(error)
+                showErrorAlert = true
             }
         }
     }
     
     private func translationToDE(category: String) -> String {
-            switch category {
-            case "motivation":
-                return "Motivation"
-            case "life":
-                return "Leben"
-            case "love":
-                return "Liebe"
-            case "wisdom":
-                return "Weisheit"
-            case "success":
-                return "Erfolg"
-            case "happiness":
-                return "Glück"
-            case "courage":
-                return "Mut"
-            case "friendship":
-                return "Freundschaft"
-            case "education":
-                return "Bildung"
-            case "future":
-                return "Zukunft"
-            default:
-                return category
-            }
+        switch category {
+        case "motivation":
+            return "Motivation"
+        case "life":
+            return "Leben"
+        case "love":
+            return "Liebe"
+        case "wisdom":
+            return "Weisheit"
+        case "success":
+            return "Erfolg"
+        case "happiness":
+            return "Glück"
+        case "courage":
+            return "Mut"
+        case "friendship":
+            return "Freundschaft"
+        case "education":
+            return "Bildung"
+        case "future":
+            return "Zukunft"
+        default:
+            return category
+        }
     }
-    
 }
 
 #Preview {

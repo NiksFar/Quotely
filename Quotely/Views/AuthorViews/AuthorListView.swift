@@ -10,6 +10,8 @@ import SwiftUI
 struct AuthorListView: View {
     
     @State private var authors: [Author] = []
+    @State private var showErrorAlert: Bool = false
+    
     private let urlString = "https://api.syntax-institut.de/authors?key="
     
     var body: some View {
@@ -31,6 +33,11 @@ struct AuthorListView: View {
             .navigationTitle(Text("Autor:innen"))
         }
         
+        .alert("Fehler", isPresented: $showErrorAlert) {
+            Button("Ok") { }
+        } message: {
+            Text("Autor:innen konnten leider nicht geladen werden. Bitte versuche es später erneut.")
+        }
     }
     
     private func getAuthorsFromAPI() async throws -> [Author] {
@@ -48,7 +55,7 @@ struct AuthorListView: View {
             do {
                 self.authors = try await getAuthorsFromAPI()
             } catch {
-                print(error)
+                showErrorAlert = true
             }
         }
         

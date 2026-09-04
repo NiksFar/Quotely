@@ -10,6 +10,9 @@ import SwiftUI
 struct QuoteView: View {
     
     @State private var quote: Quote? = nil
+    @State private var showErrorAlert: Bool = false
+    
+    private var errorMessage: String = "Das Zitat konnte leider nicht geladen werden. Bitte versuche es später erneut."
     
     var body: some View {
         
@@ -18,7 +21,7 @@ struct QuoteView: View {
             Image(systemName: "quote.opening")
                 .font(.system(size: 32, weight: .bold))
                 .foregroundStyle(.syntaxPurple)
-                .padding()
+                .padding(5)
             
             if let quote {
                 Text(quote.text)
@@ -28,6 +31,7 @@ struct QuoteView: View {
                     .italic()
                     .foregroundStyle(.primary)
                     .font(.system(size: 18))
+                
             } else {
                 Text("The only way to do great work is to love what you do...")
                     .multilineTextAlignment(.center)
@@ -38,11 +42,14 @@ struct QuoteView: View {
                     .foregroundStyle(.primary)
                     .font(.system(size: 18))
             }
+            //
         }
         .padding()
+        .frame(maxWidth: .infinity)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 35))
         .shadow(color: .black.opacity(0.15), radius: 10)
+        
         .padding()
         
         .task {
@@ -50,7 +57,7 @@ struct QuoteView: View {
         }
         
         Button {
-               fetchQuote()
+            fetchQuote()
             //
         } label: {
             HStack(spacing: 10) {
@@ -64,6 +71,12 @@ struct QuoteView: View {
             .clipShape(Capsule())
         }
         .padding()
+        
+        .alert("Fehler", isPresented: $showErrorAlert) {
+            Button("Ok") { }
+        } message: {
+            Text(errorMessage)
+        }
         
     }
     //MARK: -API-Calls
@@ -83,7 +96,7 @@ struct QuoteView: View {
             do {
                 self.quote = try await getQuoteFromAPI()
             } catch {
-                print(error)
+                showErrorAlert = true
             }
         }
     }
