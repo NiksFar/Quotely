@@ -11,22 +11,41 @@ struct AuthorListView: View {
     
     @State private var authors: [Author] = []
     @State private var showErrorAlert: Bool = false
+    @State private var hasError: Bool = false
     
     private let urlString = "https://api.syntax-institut.de/authors?key="
     
     var body: some View {
         
         NavigationStack {
-            List {
-                ForEach(authors) { author in
-                    
-                    NavigationLink {
-                        AuthorDetailView(author: author)
-                    } label: {
-                        Text(author.name)
+            VStack {
+                List {
+                    ForEach(authors) { author in
+                        
+                        NavigationLink {
+                            AuthorDetailView(author: author)
+                        } label: {
+                            Text(author.name)
+                        }
                     }
                 }
+                //Button "Erneut versuchen"
+                if hasError {
+                    Button {
+                        hasError = false
+                        showErrorAlert = false
+                        fetchAuthors()
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .foregroundStyle(.white)
+                            .frame(width: 40, height: 40)
+                            .background(.blue)
+                            .clipShape(Circle())
+                    }
+                    .offset(y: -100)
+                }
             }
+            
             .task {
                 fetchAuthors()
             }
@@ -55,6 +74,7 @@ struct AuthorListView: View {
             do {
                 self.authors = try await getAuthorsFromAPI()
             } catch {
+                hasError = true
                 showErrorAlert = true
             }
         }

@@ -11,67 +11,83 @@ struct QuoteView: View {
     
     @State private var quote: Quote? = nil
     @State private var showErrorAlert: Bool = false
+    @State private var hasError: Bool = false
     
     private var errorMessage: String = "Das Zitat konnte leider nicht geladen werden. Bitte versuche es später erneut."
     
     var body: some View {
-        
-        VStack(spacing: 15) {
-            
-            Image(systemName: "quote.opening")
-                .font(.system(size: 32, weight: .bold))
-                .foregroundStyle(.syntaxPurple)
-                .padding(5)
-            
-            if let quote {
-                Text(quote.text)
-                    .multilineTextAlignment(.center)
-                    .font(.title3.weight(.semibold))
-                Text(quote.author)
-                    .italic()
-                    .foregroundStyle(.primary)
-                    .font(.system(size: 18))
+        VStack {
+            VStack(spacing: 15) {
                 
-            } else {
-                Text("The only way to do great work is to love what you do...")
-                    .multilineTextAlignment(.center)
-                    .font(.title3.weight(.semibold))
+                Image(systemName: "quote.opening")
+                    .font(.system(size: 32, weight: .bold))
+                    .foregroundStyle(.syntaxPurple)
+                    .padding(5)
                 
-                Text("No author")
-                    .italic()
-                    .foregroundStyle(.primary)
-                    .font(.system(size: 18))
+                if let quote {
+                    Text(quote.text)
+                        .multilineTextAlignment(.center)
+                        .font(.title3.weight(.semibold))
+                    Text(quote.author)
+                        .italic()
+                        .foregroundStyle(.primary)
+                        .font(.system(size: 18))
+                    
+                } else {
+                    Text("The only way to do great work is to love what you do...")
+                        .multilineTextAlignment(.center)
+                        .font(.title3.weight(.semibold))
+                    
+                    Text("No author")
+                        .italic()
+                        .foregroundStyle(.primary)
+                        .font(.system(size: 18))
+                }
+            }
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 35))
+            .shadow(color: .black.opacity(0.15), radius: 10)
+            
+            .padding()
+            
+            .task {
+                fetchQuote()
+            }
+            
+            Button {
+                hasError = false
+                fetchQuote()
+            } label: {
+                HStack(spacing: 10) {
+                    Image(systemName: "arrow.clockwise")
+                    Text("Neues Zitat")
+                }
+                .foregroundStyle(.black)
+                .padding(.horizontal, 25)
+                .padding(.vertical, 15)
+                .background(.syntaxYellow)
+                .clipShape(Capsule())
+            }
+            .padding()
+            
+            //Button "Erneut versuchen"
+            if hasError {
+                Button {
+                    hasError = false
+                    showErrorAlert = false
+                    fetchQuote()
+                } label: {
+                    Image(systemName: "arrow.clockwise")
+                        .foregroundStyle(.white)
+                        .frame(width: 40, height: 40)
+                        .background(.blue)
+                        .clipShape(Circle())
+                }
             }
             //
         }
-        .padding()
-        .frame(maxWidth: .infinity)
-        .background(.white)
-        .clipShape(RoundedRectangle(cornerRadius: 35))
-        .shadow(color: .black.opacity(0.15), radius: 10)
-        
-        .padding()
-        
-        .task {
-            fetchQuote()
-        }
-        
-        Button {
-            fetchQuote()
-            //
-        } label: {
-            HStack(spacing: 10) {
-                Image(systemName: "arrow.clockwise")
-                Text("Neues Zitat")
-            }
-            .foregroundStyle(.black)
-            .padding(.horizontal, 25)
-            .padding(.vertical, 15)
-            .background(.syntaxYellow)
-            .clipShape(Capsule())
-        }
-        .padding()
-        
         .alert("Fehler", isPresented: $showErrorAlert) {
             Button("Ok") { }
         } message: {
@@ -96,6 +112,7 @@ struct QuoteView: View {
             do {
                 self.quote = try await getQuoteFromAPI()
             } catch {
+                hasError = true
                 showErrorAlert = true
             }
         }
