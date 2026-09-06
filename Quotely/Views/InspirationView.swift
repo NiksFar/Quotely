@@ -10,6 +10,8 @@ import SwiftUI
 struct InspirationView: View {
     
     @State private var imageArray: [Photo] = []
+    @State private var hasError = false
+    
     private var urlString: String = "https://api.unsplash.com/search/photos?query=motivation&client_id="
     
     let columns = [
@@ -18,19 +20,43 @@ struct InspirationView: View {
     ]
     
     var body: some View {
-        
-        LazyVGrid(columns: columns, spacing: 15) {
-            ForEach(imageArray) { photo in
-                AsyncImage(url: URL(string: photo.urls.regular)) { image in
-                    image.resizable()
-                    
-                        .frame(height: 150)
-                        .frame(maxWidth: .infinity)
-                    
-                        .clipped()
-                    
-                } placeholder: {
-                    ProgressView()
+        ScrollView {
+            LazyVGrid(columns: columns, spacing: 15) {
+                
+                if hasError {
+                    ForEach(0..<8) { _ in
+                        Image(systemName: "photo")
+                            .frame(height: 150)
+                            .frame(maxWidth: .infinity)
+                            .clipped()
+                    }
+                } else {
+                    ForEach(imageArray) { photo in
+                        AsyncImage(url: URL(string: photo.urls.regular)) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image.resizable()
+                                    .frame(height: 150)
+                                    .frame(maxWidth: .infinity)
+                                    .clipped()
+                            case .empty:
+                                ProgressView()
+                                    .frame(height: 150)
+                                    .frame(maxWidth: .infinity)
+                                    .clipped()
+                            case .failure(_):
+                                Image(systemName: "photo")
+                                    .frame(height: 150)
+                                    .frame(maxWidth: .infinity)
+                                    .clipped()
+                            @unknown default:
+                                Image(systemName: "photo")
+                                    .frame(height: 150)
+                                    .frame(maxWidth: .infinity)
+                                    .clipped()
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -57,7 +83,7 @@ struct InspirationView: View {
             do {
                 self.imageArray = try await getImagesFromAPI()
             } catch {
-                print(error)
+                hasError = true
             }
         }
     }
